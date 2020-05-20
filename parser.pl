@@ -99,4 +99,4 @@ $json = 'var arr = "' . $json . '"';
 
 `echo "$json" > ./dest/source.js`;
 
-say 'finished';
+say "finished: $dt";
