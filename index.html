@@ -47,7 +47,13 @@
             plEl.play()
                 .then( function ( res ) {
                     setTimeout( function () {
-                        playAll( ++id );
+                        plEl.play().then( function ( res ) {
+                            setTimeout( function () {
+                                playAll( ++id );
+                            }, Number( selected[id].time * 2 * 20 ) );
+                        } ).catch( function ( err ) {
+                            debugger;
+                        } );
                     }, Number( selected[id].time * 2 * 20 ) );
                 } )
                 .catch( function ( err ) {
