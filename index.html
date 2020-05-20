@@ -2,11 +2,21 @@
     <title>Main</title>
 </head>
 <body>
+    <hr />
+    <div><label>Paused<input id="pause-start" type="checkbox" /></label><label>Shuffle<input id="shuffle" type="checkbox" /></label></div>
+    <hr />
+    <select id="dates">
+        <option>--</option>
+    </select>
+
     <select id="langs">
         <option>--</option>
     </select>
 
     <a href="https://translate.google.com/translate_tts?ie=UTF-8&q=skj%C3%B8v%20seteryggen%20bakover&tl=no&total=1&idx=0&textlen=24&tk=578955.944266&client=webapp&prev=pbsrc">play</a>
+
+    <hr />
+
     <div id="displ" style="display: block">
         <h1 id="display"></h1>
     </div>
@@ -17,8 +27,30 @@
       crossorigin="anonymous"></script>
     <script src="dest/source.js"></script>
     <script>
+
+    var dates = {
+        '20200520': {
+            '202005192112': 1,
+        },
+    };
+
+    for ( var inx in dates ) {
+        $( '#dates' ).append( "<option id='" + inx + "' >" + inx + "</option>" );
+    }
+
+    var selectedDate = '';
+    $( '#dates' ).change( function ( ev ) {
+        selectedDate = ev.currentTarget[ ev.currentTarget.selectedIndex ].id;
+    } );
+
     var languages = {};
     arr.forEach( function ( el, i ) {
+        for ( var inx in dates ) {
+            if ( dates[inx][el.ident] ) {
+                el['dt'] = inx;
+            }
+        }
+
         if ( ! languages[ el.lang ] ) {
             languages[ el.lang ] = [];
         }
@@ -26,19 +58,69 @@
         languages[ el.lang ].push( el );
     } );
 
-
     for ( var lang in languages ) {
         $( '#langs' ).append( "<option id='" + lang + "' >" + lang + "</option>" );
+    }
+
+    var id = 0;
+    var paused = false;
+
+    var playAll = function ( id ) {};
+
+    function updateId ( updatedId ) {
+        id = updatedId;
+    }
+
+    $( '#pause-start' ).change( function ( ev ) {
+        if ( $( '#pause-start' ).is( ':checked' ) ) {
+            paused = true;
+        } else {
+            paused = false;
+            playAll( ++id );
+        }
+    } );
+
+    var shuffled = false;
+    $( '#shuffle' ).change( function ( ev ) {
+        if ( $( '#shuffle' ).is( ':checked' ) ) {
+            shuffled = true;
+        } else {
+            shuffled = false;
+        }
+    } );
+
+    function shuffle(a) {
+        var j, x, i;
+        for (i = a.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+        }
+        return a;
     }
 
     var selected = [];
     $( '#langs' ).change( function ( ev ) {
         selected = languages[ ev.currentTarget[ ev.currentTarget.selectedIndex ].id ];
 
-        var id = 0;
-        playAll( id );
-        function playAll ( id ) {
+        if ( shuffled ) {
+            selected = shuffle( selected );
+        }
+
+        playAll =  function ( id ) {
+            if ( paused        ) {
+                updateId( id );
+                return;
+            }
+
             if ( !selected[id] ) return;
+
+            if ( selectedDate && selected[id]['dt'] !== selectedDate ) {
+                playAll( ++id );
+                return;
+            }
+
             var plEl = new Audio( selected[id].audio );
             if ( ! plEl ) return;
 
@@ -60,6 +142,8 @@
                     debugger;
                 } );
         }
+
+        playAll( id );
     } );
     </script>
 </body>
