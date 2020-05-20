@@ -48,10 +48,6 @@ for my $fl ( @source ) {
 
             my $out = "dest/files/${dt}_${no}.mp3";
 
-            #my $ls = `ls ./dest/files/*_${no}.mp3`;
-
-            #next if $ls;
-
             my $_url = $entry->{ 'request' }->{ 'url' };
 
 
