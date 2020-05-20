@@ -64,15 +64,15 @@ for my $fl ( @source ) {
             `rm $out` if $sz < 1000;
 
             push ( @arr, { 
-                    no      => "'" . $no . "'",
-                    file    => "'" . $fl . "'",
-                    time    => "'" . $entry->{ 'time'    } . "'",
-                    q       => "'" . $query{   'q' } . "'",
-                    lang    => "'" . $query{   'tl'      } . "'",
-                    textlen => "'" . $query{   'textlen' } . "'",
-                    play    => "'" . $entry->{ 'request' }->{ 'url' } . "'",
-                    audio   => "'" . $out . "'",
-                    ident   => "'" . $dt . "'",
+                    no      => $no,
+                    file    => $fl,
+                    time    => $entry->{ 'time'    },
+                    q       => $query{   'q' },
+                    lang    => $query{   'tl'      },
+                    textlen => $query{   'textlen' },
+                    play    => $entry->{ 'request' }->{ 'url' },
+                    audio   => $out,
+                    ident   => $dt,
                 } );
             $no++;
         }
@@ -84,19 +84,21 @@ for my $fl ( @source ) {
 
 my @data;
 if ( `ls ./dest/data` ) {
-    @data = @{ decode_json( `cat ./dest/data` ) };
+    @data = @{ JSON->new->utf8(0)->decode( `cat ./dest/data` ) };
     @arr = ( @data, @arr );
 }
 
-my $json = encode_json( \@arr );
+my $json = JSON->new->utf8(0)->encode( \@arr );
 
 open( my $fh, '>', './dest/data' );
-print $fh $json . "\n";
+print $fh $json;
 close( $fh );
 
-$json = 'var arr = "' . $json . '"';
+$json = 'var arr = ' . $json;
 
 
-`echo "$json" > ./dest/source.js`;
+open( my $fh, '>', './dest/source.js' );
+print $fh $json;
+close( $fh );
 
 say "finished: $dt";
