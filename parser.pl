@@ -63,6 +63,7 @@ for my $fl ( @source ) {
             my $sz = -s $out;
             `rm $out` if $sz < 1000;
 
+            say "file: $fl";
             push ( @arr, { 
                     no      => $no,
                     file    => $fl,
@@ -97,7 +98,7 @@ close( $fh );
 $json = 'var arr = ' . $json;
 
 
-open( my $fh, '>', './dest/source.js' );
+open( $fh, '>', './dest/source.js' );
 print $fh $json;
 close( $fh );
 
