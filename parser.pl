@@ -23,6 +23,7 @@ my @source =  split( /\n/, `ls source` );
 
 
 my @arr;
+my $no = 0;
 for my $fl ( @source ) {
     open( my $fh, '<', "./source/$fl" );
 
@@ -36,7 +37,6 @@ for my $fl ( @source ) {
 
     my $data = decode_json( $buff );
 
-    my $no = 0;
     for my $entry ( @{ $data->{ 'log' }->{ 'entries' } } ) {
         if ( $entry->{ '_resourceType' } eq 'media' ) {
             my $url = $entry->{ 'request' }->{ 'url' };
