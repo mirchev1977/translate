@@ -125,7 +125,7 @@
             var plEl = new Audio( selected[id].audio );
             if ( ! plEl ) playAll( ++id );
 
-            $( '#display' ).text( selected[id]['q'] );
+            $( '#display' ).html( selected[id]['q'] );
 
             plEl.play()
                 .then( function ( res ) {
